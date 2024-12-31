@@ -1,22 +1,19 @@
-package org.example.pickmovies.config;
+package org.example.pickmovies.jwt;
 
-import io.jsonwebtoken.Jwt;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import lombok.RequiredArgsConstructor;
-import org.example.pickmovies.utils.JwtUtil;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-    private final JwtUtil jwtUtil;
+    private final JwtTokenProvider jwtTokenProvider;
     private final static String HEADER_AUTHORIZATION = "Authorization";
     private final static String TOKEN_PREFIX = "Bearer ";
 
@@ -27,11 +24,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         // 요청 헤더의 Authorization 키 값 조회
         final String authorizationHeader = request.getHeader(HEADER_AUTHORIZATION);
 
-        // 요청 헤더에서 AccessToken 제거
+        // 접두사 제거 (AccessToken 만 가져오기)
         String jwtToken = getAccessToken(authorizationHeader);
 
-        if (jwtUtil.validToken(jwtToken)) {
-            Authentication authentication = jwtUtil.getAuthentication(jwtToken);
+        // 토큰이 유효한지 확인 후, 인증 정보를 SecurityContextHolder
+        if (jwtTokenProvider.validToken(jwtToken)) {
+            Authentication authentication = jwtTokenProvider.getAuthentication(jwtToken);
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }
 
