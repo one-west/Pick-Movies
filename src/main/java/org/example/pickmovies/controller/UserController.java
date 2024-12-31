@@ -1,21 +1,22 @@
 package org.example.pickmovies.controller;
 
+import lombok.RequiredArgsConstructor;
+import org.example.pickmovies.dto.AddUserRequest;
+import org.example.pickmovies.service.UserService;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api")
+@RequiredArgsConstructor
 public class UserController {
 
-    @PostMapping("/users/register")
-    public void registerUser() {
-        // Implement user registration logic
-    }
+    private final UserService userService;
 
-    @PostMapping("/users/login")
-    public void loginUser() {
-        // Implement user login logic
+    @PostMapping("/user")
+    public String signup(AddUserRequest request) {
+        userService.save(request);
+        return "redirect:/login";
     }
-
 }
