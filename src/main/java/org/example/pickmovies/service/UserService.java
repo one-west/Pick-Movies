@@ -2,7 +2,7 @@ package org.example.pickmovies.service;
 
 import lombok.RequiredArgsConstructor;
 import org.example.pickmovies.domain.User;
-import org.example.pickmovies.dto.AddUserRequest;
+import org.example.pickmovies.dto.UserRequest;
 import org.example.pickmovies.repository.UserRepository;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -21,7 +21,7 @@ public class UserService {
         return userRepository.findByEmail(email).orElseThrow(() -> new IllegalArgumentException("User not found"));
     }
 
-    public Long save(AddUserRequest request) {
+    public Long save(UserRequest request) {
         User user = User.builder()
                 .email(request.getEmail())
                 .password(bCryptPasswordEncoder.encode(request.getPassword()))
