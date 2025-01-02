@@ -25,7 +25,6 @@ public class JwtSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
     public static final String REFRESH_TOKEN_COOKIE_NAME = "refresh_token";
     public static final Duration REFRESH_TOKEN_DURATION = Duration.ofDays(14);
-    public static final Duration ACCESS_TOKEN_DURATION = Duration.ofDays(1);
     public static final String REDIRECT_PATH = "/";
 
     @Override
@@ -34,17 +33,15 @@ public class JwtSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
         User user = userService.findByEmail(authentication.getName());
 
-        // 리프레시 토큰 생성
+        // RefreshToken 생성
+
         String refreshToken = jwtTokenProvider.generateToken(user, REFRESH_TOKEN_DURATION);
 
-        // 리프레시 토큰 저장
+        // RefreshToken DB에 저장
         saveRefreshToken(user.getId(), refreshToken);
 
-        // 쿠키 저장
+        // 쿠키에 저장
         addRefreshTokenToCookie(request, response, refreshToken);
-
-        // AccessToken 생성 후 path에 토큰 추가
-        String accessToken = jwtTokenProvider.generateToken(user, ACCESS_TOKEN_DURATION);
 
         // redirect
         getRedirectStrategy().sendRedirect(request, response, REDIRECT_PATH);
@@ -66,12 +63,5 @@ public class JwtSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
                 .orElse(new RefreshToken(userId, newRefreshToken));
 
         refreshTokenRepository.save(refreshToken);
-    }
-
-    private String getTargetUrl(String token) {
-        return UriComponentsBuilder.fromUriString(REDIRECT_PATH)
-                .queryParam("token", token)
-                .build()
-                .toUriString();
     }
 }
