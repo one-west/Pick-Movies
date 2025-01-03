@@ -11,7 +11,7 @@ export default function Home() {
   const fetchMovies = async () => {
     try {
       const response = await axios.get(
-          `api/api/popular-movies`
+          `/api/popular-movies`
       );
       setMovies(response.data.results);
       setLoading(false);
