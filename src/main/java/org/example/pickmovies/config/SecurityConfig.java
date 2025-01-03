@@ -41,9 +41,9 @@ public class SecurityConfig {
         http.logout(AbstractHttpConfigurer::disable);
         http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(new AntPathRequestMatcher("/api/api/popular-movies")).permitAll()
-                        .requestMatchers(new AntPathRequestMatcher("/api/**")).authenticated()
-                        .requestMatchers(new AntPathRequestMatcher("/recommend/**")).authenticated()
+                        .requestMatchers(new AntPathRequestMatcher("/api/movies/**")).permitAll()
+                        .requestMatchers(new AntPathRequestMatcher("/api/user/**")).permitAll()
+                        .requestMatchers(new AntPathRequestMatcher("/api/reviews/**")).authenticated()
                         .anyRequest().permitAll()
                 );
 
