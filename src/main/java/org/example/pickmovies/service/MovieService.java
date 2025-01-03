@@ -18,12 +18,30 @@ public class MovieService {
     @Value("${tmdb.api-key}")
     private String apiKey;
 
-
     public Mono<String> getPopularMovies() {
         String url = apiUrl + "/movie/popular?api_key=" + apiKey + "&language=ko&page=1";
 
-        return webClientBuilder.baseUrl(apiUrl)
-                .build()
+        return webClientBuilder.baseUrl(apiUrl).build()
+                .get()
+                .uri(url)
+                .retrieve()
+                .bodyToMono(String.class);
+    }
+
+    public Mono<String> getUpcomingMovies() {
+        String url = apiUrl + "/movie/upcoming?api_key=" + apiKey + "&language=ko";
+
+        return webClientBuilder.baseUrl(apiUrl).build()
+                .get()
+                .uri(url)
+                .retrieve()
+                .bodyToMono(String.class);
+    }
+
+    public Mono<String> getMovieDetails(Long id) {
+        String url = apiUrl + "/movie/" + id + "?api_key=" + apiKey + "&language=ko";
+
+        return webClientBuilder.baseUrl(apiUrl).build()
                 .get()
                 .uri(url)
                 .retrieve()
