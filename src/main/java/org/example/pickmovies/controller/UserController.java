@@ -35,7 +35,7 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).body("Regist Success");
     }
 
-    @PostMapping("/login")
+    @PostMapping("/user/login")
     public ResponseEntity<CreateAccessTokenResponse> login(@RequestBody LoginRequest request) {
         if (request.getEmail() == null || request.getPassword() == null) {
             return ResponseEntity.badRequest().body(new CreateAccessTokenResponse("Email or Password is missing"));
