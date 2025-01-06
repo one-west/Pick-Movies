@@ -6,12 +6,16 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.example.pickmovies.dto.UserRequest;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -29,17 +33,26 @@ public class User implements UserDetails {
     private String email;
     private String password;
     @Column(unique = true)
-    private String nickname;
+    private String username;
+    private String role;
+
+    @Column(nullable = false, updatable = false)
+    @CreationTimestamp
+    private LocalDateTime createdAt;
+    @UpdateTimestamp
+    private LocalDateTime updatedAt;
 
     @Builder
-    public User(String email, String password, String nickname) {
+    public User(String email, String password, String username, String role) {
         this.email = email;
         this.password = password;
-        this.nickname = nickname;
+        this.username = username;
+        this.role = role;
     }
 
-    public User update(String nickname) {
-        this.nickname = nickname;
+    public User update(String username, String password) {
+        this.username = username;
+        this.password = password;
         return this;
     }
 
