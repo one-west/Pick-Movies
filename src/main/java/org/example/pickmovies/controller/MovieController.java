@@ -17,19 +17,19 @@ public class MovieController {
     private final MovieService movieService;
 
     // 인기 영화 데이터 반환
-    @GetMapping("/movies/popular")
+    @GetMapping("/movie/popular")
     public ResponseEntity<Mono<String>> getPopularMovies() {
         return ResponseEntity.ok(movieService.getPopularMovies());
     }
 
     // 개봉 예정 영화 데이터를 반환
-    @GetMapping("/movies/upcoming")
+    @GetMapping("/movie/upcoming")
     public Mono<String> getUpcomingMovies() {
         return movieService.getUpcomingMovies();
     }
 
     // 특정 영화 상세 정보를 반환
-    @GetMapping("/movies/{id}")
+    @GetMapping("/movie/{id}")
     public Mono<String> getMovieDetails(@PathVariable("id") Long id) {
         return movieService.getMovieDetails(id);
     }
