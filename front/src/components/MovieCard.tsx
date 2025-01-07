@@ -4,7 +4,7 @@ interface MovieCardProps {
   overview: string,
 }
 
-export default function MovieCard({title, imageUrl, overview}: MovieCardProps) {
+export function MovieCard({title, imageUrl, overview}: MovieCardProps) {
   return (
       <div className="max-w-sm rounded overflow-hidden shadow-lg bg-white">
         <img src={imageUrl} alt={title} className="w-full h-64 object-cover"/>
