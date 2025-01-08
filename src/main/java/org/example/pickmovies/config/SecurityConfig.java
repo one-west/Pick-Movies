@@ -41,8 +41,6 @@ public class SecurityConfig {
         http.logout(AbstractHttpConfigurer::disable);
         http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(new AntPathRequestMatcher("/api/movies/**")).permitAll()
-                        .requestMatchers(new AntPathRequestMatcher("/api/user/**")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/api/reviews/**")).authenticated()
                         .requestMatchers(new AntPathRequestMatcher("/admin/**")).hasRole("ADMIN")
                         .requestMatchers(new AntPathRequestMatcher("/user/**")).hasRole("USER")
