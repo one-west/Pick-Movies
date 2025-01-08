@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, {AxiosError} from "axios";
 import {Link, useNavigate} from "react-router-dom";
 import {useRef, useState} from "react";
 
@@ -27,20 +27,28 @@ export default function Signin({setIsAuthenticated}: { setIsAuthenticated: (auth
     }
 
     try {
-      const response = await axios.post('/api/login', {email, password});
-      // JWT 액세스 토큰 로컬 스토리지에 저장
-      localStorage.setItem("accessToken", response.data.accessToken);
+      const response = await axios.post("/api/user/login", {email, password});
 
-      if (email === response.data.email && password === response.data.password) {
-        setIsAuthenticated(true); // 로그인 상태 업데이트
-        navigate("/profile"); // 마이페이지로 이동
+      if (response.status === 200) {
+        // JWT 액세스 토큰 로컬 스토리지에 저장
+        localStorage.setItem("accessToken", response.data.accessToken);
+
         alert("로그인 성공!");
-      } else {
-        alert("로그인 실패. 다시 시도해주세요");
+        setIsAuthenticated(true); // 로그인 상태 업데이트
+        navigate("/profile");
       }
-
     } catch (error) {
-      alert("로그인 실패. 다시 시도해주세요.");
+      if (error instanceof AxiosError) {
+        if (error.response && error.response.status === 401) {
+          alert("이메일 또는 비밀번호가 잘못되었습니다.");
+        } else if (error.response && error.response.status === 500) {
+          alert("서버 오류가 발생했습니다. 관리자에게 문의하세요.");
+        } else {
+          alert("로그인 중 알 수 없는 오류가 발생했습니다.");
+        }
+      } else {
+        alert(error);
+      }
     }
   }
   return (

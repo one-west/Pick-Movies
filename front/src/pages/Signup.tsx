@@ -1,4 +1,6 @@
 import {useState, useRef} from "react";
+import {useNavigate} from "react-router-dom";
+import axios from "axios";
 
 export default function Signup() {
   const [formData, setFormData] = useState({
@@ -14,6 +16,8 @@ export default function Signup() {
   const passwordRef = useRef<HTMLInputElement>(null);
   const confirmPasswordRef = useRef<HTMLInputElement>(null);
 
+  const navigate = useNavigate();
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
       ...formData,
@@ -21,7 +25,7 @@ export default function Signup() {
     });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const {username, email, password, confirmPassword} = formData;
 
@@ -55,8 +59,15 @@ export default function Signup() {
       return;
     }
 
-    setError("");
-    alert("회원가입 성공!");
+    try {
+      const response = await axios.post("/api/user", {email, password, username});
+      if (response.status === 201) {
+        alert("회원가입 성공!");
+        navigate("/signin")
+      }
+    } catch (error) {
+      alert(`API 호출 에러: ${error}`);
+    }
   };
 
   return (
