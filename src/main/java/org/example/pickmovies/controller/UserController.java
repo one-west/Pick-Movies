@@ -1,17 +1,16 @@
 package org.example.pickmovies.controller;
 
 import java.time.Duration;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.example.pickmovies.domain.User;
-import org.example.pickmovies.dto.CreateAccessTokenResponse;
 import org.example.pickmovies.dto.LoginRequest;
+import org.example.pickmovies.dto.LoginResponse;
 import org.example.pickmovies.dto.UserRequest;
 import org.example.pickmovies.dto.UserResponse;
 import org.example.pickmovies.jwt.JwtTokenProvider;
 import org.example.pickmovies.service.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -28,6 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class UserController {
 
+    private static final Logger log = LoggerFactory.getLogger(UserController.class);
     private final UserService userService;
     private final JwtTokenProvider jwtTokenProvider;
     public static final Duration ACCESS_TOKEN_DURATION = Duration.ofDays(1);
@@ -78,20 +78,20 @@ public class UserController {
 
     // 사용자 로그인
     @PostMapping("/user/login")
-    public ResponseEntity<CreateAccessTokenResponse> login(@RequestBody LoginRequest request) {
-        if (request.getEmail() == null || request.getPassword() == null) {
-            return ResponseEntity.badRequest().body(new CreateAccessTokenResponse("Email or Password is missing"));
-        }
+    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request) {
+        try {
+            User confirmUser = userService.loginConfirm(request);
 
-        User findUser = userService.findByEmail(request.getEmail());
-        if (findUser != null) {
+            if (confirmUser == null) {
+                throw new IllegalArgumentException("Invalid email or password");
+            }
+
             // AccessToken 생성
-            String accessToken = jwtTokenProvider.generateToken(findUser, ACCESS_TOKEN_DURATION);
-            return ResponseEntity.ok(new CreateAccessTokenResponse(accessToken));
-        } else {
-            return ResponseEntity.badRequest().body(new CreateAccessTokenResponse("Invalid Email or Password"));
+            String accessToken = jwtTokenProvider.generateToken(confirmUser, ACCESS_TOKEN_DURATION);
+            return ResponseEntity.ok(new LoginResponse(confirmUser, accessToken));
+
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new LoginResponse());
         }
-
     }
-
 }
