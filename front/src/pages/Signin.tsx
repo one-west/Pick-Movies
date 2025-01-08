@@ -1,11 +1,12 @@
 import axios from "axios";
-import {Link} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import {useRef, useState} from "react";
 
-export default function Signin() {
+export default function Signin({setIsAuthenticated}: { setIsAuthenticated: (auth: boolean) => void }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const navigate = useNavigate();
 
   const emailRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
@@ -29,7 +30,15 @@ export default function Signin() {
       const response = await axios.post('/api/login', {email, password});
       // JWT 액세스 토큰 로컬 스토리지에 저장
       localStorage.setItem("accessToken", response.data.accessToken);
-      alert("로그인 성공!");
+
+      if (email === response.data.email && password === response.data.password) {
+        setIsAuthenticated(true); // 로그인 상태 업데이트
+        navigate("/profile"); // 마이페이지로 이동
+        alert("로그인 성공!");
+      } else {
+        alert("로그인 실패. 다시 시도해주세요");
+      }
+
     } catch (error) {
       alert("로그인 실패. 다시 시도해주세요.");
     }

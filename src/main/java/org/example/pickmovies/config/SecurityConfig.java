@@ -44,6 +44,8 @@ public class SecurityConfig {
                         .requestMatchers(new AntPathRequestMatcher("/api/movies/**")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/api/user/**")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/api/reviews/**")).authenticated()
+                        .requestMatchers(new AntPathRequestMatcher("/admin/**")).hasRole("ADMIN")
+                        .requestMatchers(new AntPathRequestMatcher("/user/**")).hasRole("USER")
                         .anyRequest().permitAll()
                 );
 
