@@ -11,5 +11,4 @@ public class PickMoviesApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(PickMoviesApplication.class, args);
 	}
-
 }
