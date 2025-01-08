@@ -13,7 +13,6 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.example.pickmovies.dto.UserRequest;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.security.core.GrantedAuthority;
@@ -34,6 +33,7 @@ public class User implements UserDetails {
     private String password;
     @Column(unique = true)
     private String username;
+    @Column(nullable = false)
     private String role;
 
     @Column(nullable = false, updatable = false)
@@ -47,7 +47,7 @@ public class User implements UserDetails {
         this.email = email;
         this.password = password;
         this.username = username;
-        this.role = role;
+        this.role = (role == null || role.isEmpty()) ? "user" : role;
     }
 
     public User update(String username, String password) {
@@ -78,7 +78,11 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority("user"));
+        if ("admin".equals(role)) {
+            return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"), new SimpleGrantedAuthority("ROLE_USER"));
+        } else {
+            return List.of(new SimpleGrantedAuthority("ROLE_USER"));
+        }
     }
 
     @Override
