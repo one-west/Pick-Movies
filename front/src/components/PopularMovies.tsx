@@ -59,9 +59,6 @@ export const PopularMovies = () => {
                   <div className="p-4">
                     <h4 className="text-lg font-bold">{movie.title}</h4>
                     <p className="text-sm text-gray-400">{movie.release_date}</p>
-                    {/*<button className="mt-2 px-4 py-2 bg-yellow-400 text-gray-900 font-bold rounded hover:bg-yellow-500">*/}
-                    {/*  Details*/}
-                    {/*</button>*/}
                   </div>
                 </div>
             ))}
