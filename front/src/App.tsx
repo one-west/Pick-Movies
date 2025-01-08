@@ -4,6 +4,7 @@ import Signin from "./pages/Signin.tsx";
 import Signup from "./pages/Signup.tsx";
 import ProtectedRoute from "./components/ProtectedRoute.tsx";
 import {useState} from "react";
+import Profile from "./pages/Profile.tsx";
 
 export default function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false); // 로그인 상태 관리
@@ -15,7 +16,7 @@ export default function App() {
     },
     {
       path: "/signin",
-      element: <Signin/>
+      element: <Signin setIsAuthenticated={setIsAuthenticated}/>
     },
     {
       path: "/signup",
@@ -25,7 +26,7 @@ export default function App() {
       path: "/profile",
       element: (
           <ProtectedRoute isAuthenticated={isAuthenticated}>
-            <Pro/>
+            <Profile/>
           </ProtectedRoute>
       )
     }
