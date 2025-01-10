@@ -33,4 +33,10 @@ public class MovieController {
     public Mono<String> getMovieDetails(@PathVariable("id") Long id) {
         return movieService.getMovieDetails(id);
     }
+
+    // 영화 트레일러 정보를 반환
+    @GetMapping("/movie/{id}/videos")
+    public Mono<String> getMovieVideos(@PathVariable("id") Long id) {
+        return movieService.getMovieVideos(id);
+    }
 }
