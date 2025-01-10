@@ -7,7 +7,7 @@ import {YouTubeVideo} from "../components/YoutubeVideo.tsx";
 export default function MovieDetail() {
   const {id} = useParams<{ id: string }>();
   const [movie, setMovie] = useState<MovieProps>();
-  const [videoId, setVideoId] = useState<string>("");
+  const [trailerKey, setTrailerKey] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -28,15 +28,29 @@ export default function MovieDetail() {
   const fetchTrailer = async (id: string) => {
     try {
       const response: AxiosResponse<MovietrailerProps> = await axios.get(`/api/movie/${id}/videos`);
-      const trailers = response.data.results.filter(
-          (video) => video.type === "Trailer"
+
+      // 1. `language=ko` 트레일러 필터링
+      const koreanTrailer = response.data.results.find(
+          (video) => video.type === "Trailer" && video.iso_639_1 === "ko"
       );
 
-      for (const trailer of trailers) {
-        if (trailer.key !== null) {
-          setVideoId(trailer.key)
-          return;
-        }
+      // 2. `language=en` 트레일러 필터링
+      const fallbackTrailer = response.data.results.find(
+          (video) => video.type === "Trailer" && video.iso_639_1 === "en"
+      );
+
+      // 3. 첫 번째 트레일러 fallback
+      const defaultTrailer = response.data.results[0];
+
+      // 3. 트레일러 키 설정
+      if (koreanTrailer) {
+        setTrailerKey(koreanTrailer.key);
+      } else if (fallbackTrailer) {
+        setTrailerKey(fallbackTrailer.key);
+      } else if (defaultTrailer) {
+        setTrailerKey(defaultTrailer.key);
+      } else {
+        setTrailerKey(null); // 결과가 없는 경우
       }
     } catch (error) {
       console.error("에러 fetchTrailer 중 문제발생", error);
@@ -124,14 +138,14 @@ export default function MovieDetail() {
                 <div className="flex gap-4 mt-8">
                   <button
                       onClick={openModal}
-                      disabled={!videoId}
+                      disabled={!trailerKey}
                       className={`bg-yellow-500 text-black px-6 py-2 rounded-lg font-semibold transition ${
-                          videoId ? "hover:bg-yellow-600" : "opacity-50 cursor-not-allowed"
+                          trailerKey ? "hover:bg-yellow-600" : "opacity-50 cursor-not-allowed"
                       }`}
                   >
                     Watch Trailer
                   </button>
-                  {isModalOpen && videoId && (
+                  {isModalOpen && trailerKey && (
                       <div className="fixed inset-0 bg-black bg-opacity-75 flex justify-center items-center z-50">
                         <div className="relative w-11/12 lg:w-2/3">
                           {/* 닫기 버튼 */}
@@ -142,7 +156,7 @@ export default function MovieDetail() {
                             ✖
                           </button>
                           {/* 트레일러 영상 */}
-                          <YouTubeVideo videoId={videoId}/>
+                          <YouTubeVideo trailerKey={trailerKey}/>
                         </div>
                       </div>
                   )}
