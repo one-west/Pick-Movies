@@ -1,5 +1,9 @@
 package org.example.pickmovies.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -11,6 +15,7 @@ import reactor.core.publisher.Mono;
 public class MovieService {
 
     private final WebClient.Builder webClientBuilder;
+    ObjectMapper objectMapper = new ObjectMapper();
 
     @Value("${tmdb.api-url}")
     private String apiUrl;
@@ -54,11 +59,35 @@ public class MovieService {
     // 영화 트레일러 정보를 가져오기
     public Mono<String> getMovieVideos(Long id) {
         String url = apiUrl + "/movie/" + id + "/videos" + "?api_key=" + apiKey + "&language=ko";
+        String fallbackUrl = apiUrl + "/movie/" + id + "/videos" + "?api_key=" + apiKey;
 
+        // `language=ko`로 조회 시 결과가 없을 경우 fallback 처리
         return webClientBuilder.baseUrl(apiUrl).build()
                 .get()
                 .uri(url)
                 .retrieve()
-                .bodyToMono(String.class);
+                .bodyToMono(String.class)
+                .flatMap(videos -> {
+                    try {
+                        // JSON 파싱
+                        JsonNode rootNode = objectMapper.readTree(videos);
+                        JsonNode resultsNode = rootNode.get("results");
+
+                        // results가 비어있는지 확인
+                        if (resultsNode != null && resultsNode.isArray() && resultsNode.size() > 0) {
+                            return Mono.just(videos); // 결과가 있는 경우 반환
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                    // results가 비어있거나 JSON 파싱에 실패한 경우 fallback
+                    return webClientBuilder.baseUrl(apiUrl).build()
+                            .get()
+                            .uri(fallbackUrl)
+                            .retrieve()
+                            .bodyToMono(String.class);
+                });
     }
+
 }
