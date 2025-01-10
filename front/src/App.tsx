@@ -5,6 +5,7 @@ import Signup from "./pages/Signup.tsx";
 import ProtectedRoute from "./components/ProtectedRoute.tsx";
 import {useState} from "react";
 import Profile from "./pages/Profile.tsx";
+import MovieDetail from "./pages/MovieDetail.tsx";
 
 export default function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false); // 로그인 상태 관리
