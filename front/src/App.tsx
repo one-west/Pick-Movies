@@ -29,7 +29,11 @@ export default function App() {
             <Profile/>
           </ProtectedRoute>
       )
-    }
+    },
+    {
+      path: "/movies/:movieId",
+      element: <MovieDetail />,
+    },
   ])
   return (
       <div className="App">
