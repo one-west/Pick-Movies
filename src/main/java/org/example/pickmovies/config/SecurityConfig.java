@@ -5,10 +5,13 @@ import org.example.pickmovies.jwt.JwtAuthenticationFilter;
 import org.example.pickmovies.jwt.JwtSuccessHandler;
 import org.example.pickmovies.jwt.JwtTokenProvider;
 import org.example.pickmovies.repository.RefreshTokenRepository;
+import org.example.pickmovies.service.UserDetailService;
 import org.example.pickmovies.service.UserService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
@@ -42,6 +45,7 @@ public class SecurityConfig {
         http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(new AntPathRequestMatcher("/api/movie/**")).permitAll()
+                        .requestMatchers(new AntPathRequestMatcher("/api/user/login")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/api/**")).authenticated()
                         .requestMatchers(new AntPathRequestMatcher("/admin/**")).hasRole("ADMIN")
                         .requestMatchers(new AntPathRequestMatcher("/user/**")).hasRole("USER")
