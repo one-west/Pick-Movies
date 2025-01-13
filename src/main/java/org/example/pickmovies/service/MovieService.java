@@ -74,7 +74,7 @@ public class MovieService {
                         JsonNode resultsNode = rootNode.get("results");
 
                         // results가 비어있는지 확인
-                        if (resultsNode != null && resultsNode.isArray() && resultsNode.size() > 0) {
+                        if (resultsNode != null && resultsNode.isArray() && !resultsNode.isEmpty()) {
                             return Mono.just(videos); // 결과가 있는 경우 반환
                         }
                     } catch (Exception e) {
