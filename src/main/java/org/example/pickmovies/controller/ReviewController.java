@@ -3,10 +3,12 @@ package org.example.pickmovies.controller;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.example.pickmovies.domain.Review;
+import org.example.pickmovies.domain.User;
 import org.example.pickmovies.dto.ReviewDto;
 import org.example.pickmovies.service.ReviewService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,9 +25,13 @@ public class ReviewController {
 
     private final ReviewService reviewService;
 
+
     // 리뷰 생성
     @PostMapping("/reviews")
-    public ResponseEntity<ReviewDto> createReview(@RequestBody ReviewDto reviewDto) {
+    public ResponseEntity<ReviewDto> createReview(@RequestBody ReviewDto reviewDto, @AuthenticationPrincipal User user) {
+        // userDetails에서 인증된 사용자 정보 가져오기
+        Long userId = user.getId();
+        reviewDto.setUserId(userId);
         Review createdReview = reviewService.createReview(reviewDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(new ReviewDto(createdReview));
     }
