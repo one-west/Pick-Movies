@@ -1,26 +1,34 @@
-import {useParams} from "react-router-dom";
 import {useEffect, useState} from "react";
 import axios, {AxiosResponse} from "axios";
 import {MovieProps, MovietrailerProps} from "../type/MovieProps.ts";
 import {YouTubeVideo} from "../components/YoutubeVideo.tsx";
+import {useParams} from "react-router-dom";
+import ReviewForm from "../components/ReviewForm.tsx";
 
 export default function MovieDetail() {
-  const {id} = useParams<{ id: string }>();
   const [movie, setMovie] = useState<MovieProps>();
   const [trailerKey, setTrailerKey] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
 
+  const {id} = useParams<{ id: string }>();
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
+
+  useEffect(() => {
+    fetchMovieDetails();
+    fetchTrailer(id!);
+    checkAuth();
+  }, [id]);
 
   const fetchMovieDetails = async () => {
     try {
       const response = await axios.get(`/api/movie/${id}`);
       setMovie(response.data);
-      setLoading(false);
     } catch (error) {
       console.error("에러 fetchMovieDetails 중 문제발생:", error);
+    } finally {
       setLoading(false);
     }
   };
@@ -54,14 +62,14 @@ export default function MovieDetail() {
       }
     } catch (error) {
       console.error("에러 fetchTrailer 중 문제발생", error);
-      return null;
     }
   };
 
-  useEffect(() => {
-    fetchMovieDetails();
-    fetchTrailer(id!);
-  }, [id]);
+  const checkAuth = () => {
+    // 예: JWT 토큰으로 로그인 여부를 확인
+    const token = localStorage.getItem("accessToken");
+    setIsAuthenticated(!!token);
+  };
 
   if (loading) {
     return (
@@ -166,6 +174,8 @@ export default function MovieDetail() {
                 </div>
               </div>
             </div>
+            {/* 리뷰 폼 */}
+            <ReviewForm id={id!} isAuthenticated={isAuthenticated}/>
           </div>
         </div>
       </div>
