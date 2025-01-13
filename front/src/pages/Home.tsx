@@ -1,8 +1,8 @@
 import {Header} from "../components/Header.tsx";
 import {HeroSection} from "../components/HeroSection.tsx";
 import {SearchSection} from "../components/SearchSection.tsx";
-import {PopularMovies} from "../components/PopularMovies.tsx";
 import {Footer} from "../components/Footer.tsx";
+import {PopularMovies} from "../components/PopularMovies.tsx";
 
 export default function Home() {
   return (
