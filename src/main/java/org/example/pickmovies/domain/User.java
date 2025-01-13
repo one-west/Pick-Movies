@@ -90,9 +90,6 @@ public class User implements UserDetails {
         }
     }
 
-    // 사용자의 id를 반환 (고유한 값)
-
-
     @Override
     public String getUsername() {
         return email;
