@@ -56,26 +56,31 @@ public class User implements UserDetails {
         return this;
     }
 
+    // 계정 만료 여부 반환
     @Override
     public boolean isAccountNonExpired() {
         return UserDetails.super.isAccountNonExpired();
     }
 
+    // 계정 잠금 여부 반환
     @Override
     public boolean isAccountNonLocked() {
         return UserDetails.super.isAccountNonLocked();
     }
 
+    // 패스워드의 만료 여부 반환
     @Override
     public boolean isCredentialsNonExpired() {
         return UserDetails.super.isCredentialsNonExpired();
     }
 
+    // 계정 사용 가능 여부 반환
     @Override
     public boolean isEnabled() {
         return UserDetails.super.isEnabled();
     }
 
+    // 권한 반환
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         if ("admin".equals(role)) {
@@ -84,6 +89,9 @@ public class User implements UserDetails {
             return List.of(new SimpleGrantedAuthority("ROLE_USER"));
         }
     }
+
+    // 사용자의 id를 반환 (고유한 값)
+
 
     @Override
     public String getUsername() {
