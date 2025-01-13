@@ -1,10 +1,10 @@
 package org.example.pickmovies.dto;
 
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.example.pickmovies.domain.Review;
 
-@Getter
+@Data
 @NoArgsConstructor
 public class ReviewDto {
     private Long id;
