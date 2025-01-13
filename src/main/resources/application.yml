@@ -4,8 +4,6 @@ spring:
     include: secret
   jpa:
     show-sql: true
-    hibernate:
-      ddl-auto: create
     properties:
       hibernate:
         format_sql: true
@@ -17,4 +15,4 @@ spring:
 logging:
   level:
     root: info
-    org.hibernate: trace
+    org.hibernate: debug
