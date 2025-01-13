@@ -34,7 +34,6 @@ public class JwtSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
         User user = userService.findByEmail(authentication.getName());
 
         // RefreshToken 생성
-
         String refreshToken = jwtTokenProvider.generateToken(user, REFRESH_TOKEN_DURATION);
 
         // RefreshToken DB에 저장
