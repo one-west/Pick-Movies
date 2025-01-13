@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.example.pickmovies.domain.Review;
+import org.example.pickmovies.domain.User;
 import org.example.pickmovies.dto.ReviewDto;
 import org.example.pickmovies.repository.ReviewRepository;
 import org.springframework.stereotype.Service;
