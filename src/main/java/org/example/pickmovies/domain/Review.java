@@ -5,10 +5,16 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import java.security.Timestamp;
+import java.time.LocalDateTime;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.example.pickmovies.dto.ReviewDto;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 @Entity
 @Getter
@@ -21,17 +27,24 @@ public class Review {
 
     private Long movieId;
 
-    private Long userId;
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     @Column(length = 500)
     private String content;
 
     private int rating;
 
+    @CreationTimestamp
+    private LocalDateTime createdAt;
+    @UpdateTimestamp
+    private LocalDateTime updatedAt;
+
     @Builder
-    public Review(ReviewDto reviewDto) {
+    public Review(ReviewDto reviewDto, User user) {
+        this.user = user;
         this.movieId = reviewDto.getMovieId();
-        this.userId = reviewDto.getUserId();
         this.content = reviewDto.getContent();
         this.rating = reviewDto.getRating();
     }
