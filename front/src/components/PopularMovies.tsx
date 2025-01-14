@@ -1,33 +1,42 @@
-import axios from "axios";
 import {useEffect, useState} from "react";
 import {Link} from "react-router-dom";
 import {MovieProps} from "../type/MovieProps.ts";
+// import {fetchWithToken} from "../api/fetchWithToken.ts";
+import axios, {AxiosError} from "axios";
 
 
 export const PopularMovies = () => {
   const [movies, setMovies] = useState<MovieProps[]>([]); // 영화 데이터를 저장할 상태
   const [loading, setLoading] = useState<boolean>(true);
 
+  const token = localStorage.getItem("accessToken");
+
+  useEffect(() => {
+    getPopularMovies();
+  }, []);
+
   const getPopularMovies = async () => {
     try {
-      const response = await axios.get(`/api/movie/popular`).then(
-          response => response.data.results
-      )
-      return response
+      const response = await axios.get(`/api/movie/popular`, {headers: {Authorization: `Bearer ${token}`}})
+
+      if (response.status === 200) {
+        setMovies(response.data.results);
+      }
+
     } catch (error) {
-      console.error("에러 fetch 중 문제발생", error);
-      return [];
+      if (error instanceof AxiosError) {
+        if (error.status === 401)
+          alert("인증이 필요한 요청입니다. 로그인 후 이용해주세요")
+        else if (error.status === 500)
+          console.error("서버에서 에러가 발생했습니다. : ", error);
+      } else {
+        console.error(error);
+      }
+
+    } finally {
+      setLoading(false);
     }
   };
-  useEffect(() => {
-    const fetchMovies = async () => {
-      const recommendedMovies = await getPopularMovies();
-      setMovies(recommendedMovies);
-      setLoading(false);
-    };
-
-    fetchMovies();
-  }, []);
 
   if (loading) {
     return (
@@ -65,6 +74,5 @@ export const PopularMovies = () => {
           </div>
         </div>
       </section>
-
   );
 };
