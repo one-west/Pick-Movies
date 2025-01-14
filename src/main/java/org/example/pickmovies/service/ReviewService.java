@@ -17,8 +17,8 @@ public class ReviewService {
     private final ReviewRepository reviewRepository;
 
     // 리뷰 생성
-    public Review createReview(ReviewDto reviewDto) {
-        Review newReview = Review.builder().reviewDto(reviewDto).build();
+    public Review createReview(ReviewDto reviewDto, User writeUser) {
+        Review newReview = Review.builder().reviewDto(reviewDto).user(writeUser).build();
         return reviewRepository.save(newReview);
     }
 
