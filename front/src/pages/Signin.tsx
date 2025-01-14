@@ -27,7 +27,11 @@ export default function Signin({setIsAuthenticated}: { setIsAuthenticated: (auth
     }
 
     try {
-      const response = await axios.post("/api/user/login", {email, password});
+      const response = await axios.post("/api/user/login", {email, password}, {
+        headers: {
+          "Content-Type": "application/json",
+        }
+      });
 
       if (response.status === 200) {
         // JWT 액세스 토큰 로컬 스토리지에 저장
@@ -35,7 +39,7 @@ export default function Signin({setIsAuthenticated}: { setIsAuthenticated: (auth
 
         alert("로그인 성공!");
         setIsAuthenticated(true); // 로그인 상태 업데이트
-        navigate("/profile");
+        navigate("/");
       }
     } catch (error) {
       if (error instanceof AxiosError) {
@@ -72,6 +76,7 @@ export default function Signin({setIsAuthenticated}: { setIsAuthenticated: (auth
               <input
                   type="email"
                   id="email"
+                  name="email"
                   className="w-full px-4 py-2 rounded-lg bg-gray-700 border border-gray-600 text-white focus:outline-none focus:ring-2 focus:ring-yellow-400"
                   placeholder="Enter your email"
                   ref={emailRef}
@@ -85,6 +90,7 @@ export default function Signin({setIsAuthenticated}: { setIsAuthenticated: (auth
               <input
                   type="password"
                   id="password"
+                  name="password"
                   className="w-full px-4 py-2 rounded-lg bg-gray-700 border border-gray-600 text-white focus:outline-none focus:ring-2 focus:ring-yellow-400"
                   placeholder="Enter your password"
                   ref={passwordRef}
