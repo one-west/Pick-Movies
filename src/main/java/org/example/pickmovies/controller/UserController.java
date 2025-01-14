@@ -1,13 +1,18 @@
 package org.example.pickmovies.controller;
 
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.time.Duration;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.example.pickmovies.domain.User;
 import org.example.pickmovies.dto.LoginRequest;
 import org.example.pickmovies.dto.LoginResponse;
 import org.example.pickmovies.dto.UserRequest;
 import org.example.pickmovies.dto.UserResponse;
 import org.example.pickmovies.jwt.JwtTokenProvider;
+import org.example.pickmovies.service.TokenService;
 import org.example.pickmovies.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,15 +27,17 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@Slf4j
 @RestController
 @RequestMapping("/api")
 @RequiredArgsConstructor
 public class UserController {
 
-    private static final Logger log = LoggerFactory.getLogger(UserController.class);
     private final UserService userService;
     private final JwtTokenProvider jwtTokenProvider;
-    public static final Duration ACCESS_TOKEN_DURATION = Duration.ofDays(1);
+    private final TokenService tokenService;
+    public static final Duration ACCESS_TOKEN_DURATION = Duration.ofHours(2);
+    public static final Duration REFRESH_TOKEN_DURATION = Duration.ofDays(7);
 
     // 사용자 조회
     @GetMapping("/user/{id}")
@@ -78,9 +85,11 @@ public class UserController {
 
     // 사용자 로그인
     @PostMapping("/user/login")
-    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request) {
+    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest loginRequest, HttpServletRequest request,
+            HttpServletResponse response) {
+        log.info("UserController.login () === " + loginRequest.getEmail());
         try {
-            User confirmUser = userService.loginConfirm(request);
+            User confirmUser = userService.loginConfirm(loginRequest);
 
             if (confirmUser == null) {
                 throw new IllegalArgumentException("Invalid email or password");
@@ -88,6 +97,14 @@ public class UserController {
 
             // AccessToken 생성
             String accessToken = jwtTokenProvider.generateToken(confirmUser, ACCESS_TOKEN_DURATION);
+
+            // RefreshToken 생성 및 DB 저장
+            String refreshToken = jwtTokenProvider.generateToken(confirmUser, REFRESH_TOKEN_DURATION);
+            tokenService.saveRefreshToken(confirmUser.getId(), refreshToken);
+
+            // 쿠키에 저장
+            tokenService.addRefreshTokenToCookie(request, response, refreshToken);
+
             return ResponseEntity.ok(new LoginResponse(confirmUser, accessToken));
 
         } catch (IllegalArgumentException e) {
