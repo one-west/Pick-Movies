@@ -1,5 +1,7 @@
 package org.example.pickmovies.dto;
 
+import java.time.LocalDateTime;
+import java.util.Date;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.example.pickmovies.domain.Review;
@@ -9,15 +11,17 @@ import org.example.pickmovies.domain.Review;
 public class ReviewDto {
     private Long id;
     private Long movieId;
-    private Long userId;
+    private String author;
     private String content;
     private int rating;
+    private LocalDateTime createdAt;
 
     public ReviewDto(Review review) {
-        this.id = id;
-        this.movieId = movieId;
-        this.userId = userId;
-        this.content = content;
-        this.rating = rating;
+        this.id = review.getId();
+        this.movieId = review.getMovieId();
+        this.author = review.getUser().getUsername();
+        this.content = review.getContent();
+        this.rating = review.getRating();
+        this.createdAt = review.getCreatedAt();
     }
 }
