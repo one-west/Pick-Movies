@@ -1,9 +1,10 @@
 import {useEffect, useState} from "react";
-import axios, {AxiosResponse} from "axios";
+import axios, {AxiosError, AxiosResponse} from "axios";
 import {MovieProps, MovietrailerProps} from "../type/MovieProps.ts";
 import {YouTubeVideo} from "../components/YoutubeVideo.tsx";
 import {useParams} from "react-router-dom";
 import ReviewForm from "../components/ReviewForm.tsx";
+import ReviewList from "../components/ReviewList.tsx";
 
 export default function MovieDetail() {
   const [movie, setMovie] = useState<MovieProps>();
@@ -22,12 +23,30 @@ export default function MovieDetail() {
     checkAuth();
   }, [id]);
 
+  const token = localStorage.getItem("accessToken");
+
   const fetchMovieDetails = async () => {
     try {
-      const response = await axios.get(`/api/movie/${id}`);
-      setMovie(response.data);
+      const response = await axios.get(`/api/movie/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+
+      if (response.status === 200) {
+        setMovie(response.data);
+      }
+
     } catch (error) {
-      console.error("에러 fetchMovieDetails 중 문제발생:", error);
+      if (error instanceof AxiosError) {
+        if (error.status === 401)
+          alert("인증이 필요한 요청입니다. 로그인 후 이용해주세요")
+        else if (error.status === 500)
+          console.error("서버에서 에러가 발생했습니다. : ", error);
+      } else {
+        console.error(error);
+      }
+
     } finally {
       setLoading(false);
     }
@@ -176,6 +195,7 @@ export default function MovieDetail() {
             </div>
             {/* 리뷰 폼 */}
             <ReviewForm id={id!} isAuthenticated={isAuthenticated}/>
+            <ReviewList movieId={id!}/>
           </div>
         </div>
       </div>
