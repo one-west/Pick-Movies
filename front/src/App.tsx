@@ -32,7 +32,7 @@ export default function App() {
       )
     },
     {
-      path: "/movies/:id",
+      path: "/movies/:movieId",
       element: <MovieDetail />,
     },
   ])
