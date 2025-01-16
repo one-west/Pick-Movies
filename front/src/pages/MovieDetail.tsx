@@ -12,22 +12,23 @@ export default function MovieDetail() {
   const [loading, setLoading] = useState<boolean>(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const [reviewsUpdated, setReviewsUpdated] = useState(false);
 
-  const {id} = useParams<{ id: string }>();
+  const {movieId} = useParams<{ movieId: string }>();
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
 
   useEffect(() => {
     fetchMovieDetails();
-    fetchTrailer(id!);
+    fetchTrailer(movieId!);
     checkAuth();
-  }, [id]);
+  }, [movieId]);
 
   const token = localStorage.getItem("accessToken");
 
   const fetchMovieDetails = async () => {
     try {
-      const response = await axios.get(`/api/movie/${id}`, {
+      const response = await axios.get(`/api/movie/${movieId}`, {
         headers: {
           Authorization: `Bearer ${token}`
         }
@@ -52,9 +53,9 @@ export default function MovieDetail() {
     }
   };
 
-  const fetchTrailer = async (id: string) => {
+  const fetchTrailer = async (movieId: string) => {
     try {
-      const response: AxiosResponse<MovietrailerProps> = await axios.get(`/api/movie/${id}/videos`);
+      const response: AxiosResponse<MovietrailerProps> = await axios.get(`/api/movie/${movieId}/videos`);
 
       // 1. `language=ko` 트레일러 필터링
       const koreanTrailer = response.data.results.find(
@@ -88,6 +89,10 @@ export default function MovieDetail() {
     // 예: JWT 토큰으로 로그인 여부를 확인
     const token = localStorage.getItem("accessToken");
     setIsAuthenticated(!!token);
+  };
+
+  const handleReviewSubmit = () => {
+    setReviewsUpdated((prev) => !prev); // 상태 토글
   };
 
   if (loading) {
@@ -187,15 +192,16 @@ export default function MovieDetail() {
                         </div>
                       </div>
                   )}
-                  <button className="bg-gray-800 text-yellow-400 px-6 py-2 rounded-lg font-semibold hover:bg-gray-700 transition">
+                  <button
+                      className="bg-gray-800 text-yellow-400 px-6 py-2 rounded-lg font-semibold hover:bg-gray-700 transition">
                     Add to Watchlist
                   </button>
                 </div>
               </div>
             </div>
             {/* 리뷰 폼 */}
-            <ReviewForm id={id!} isAuthenticated={isAuthenticated}/>
-            <ReviewList movieId={id!}/>
+            <ReviewForm movieId={movieId!} isAuthenticated={isAuthenticated} onReviewSubmit={handleReviewSubmit}/>
+            <ReviewList movieId={movieId!} reviewsUpdated={reviewsUpdated}/>
           </div>
         </div>
       </div>

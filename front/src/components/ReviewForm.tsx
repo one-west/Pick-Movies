@@ -3,7 +3,13 @@ import {useState} from "react";
 import {useNavigate} from "react-router-dom";
 import {FaStar} from "react-icons/fa";
 
-export default function ReviewForm({id, isAuthenticated}: { id: string, isAuthenticated: boolean }) {
+interface ReviewFormProps {
+  movieId: string;
+  isAuthenticated: boolean;
+  onReviewSubmit: () => void;
+}
+
+export default function ReviewForm({movieId, isAuthenticated, onReviewSubmit}: ReviewFormProps) {
   const [reviewText, setReviewText] = useState<string>("");
   const [rating, setRating] = useState<number | null>(null);
   const navigate = useNavigate();
@@ -17,7 +23,7 @@ export default function ReviewForm({id, isAuthenticated}: { id: string, isAuthen
 
     try {
       await axios.post("/api/reviews", {
-        movieId: id,
+        movieId: movieId,
         content: reviewText,
         rating: rating,
       }, {
@@ -28,8 +34,9 @@ export default function ReviewForm({id, isAuthenticated}: { id: string, isAuthen
       alert("리뷰가 저장되었습니다!");
       setReviewText(""); // 입력 필드 초기화
       setRating(null); // 별점 초기화
+      onReviewSubmit() // 부모 컴포넌트에 작성 완료 전달
     } catch (error) {
-      console.error("Error saving review:", error);
+      console.error("리뷰 작성 오류:", error);
       alert("리뷰 저장 중 문제가 발생했습니다.");
     }
   };

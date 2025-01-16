@@ -7,4 +7,5 @@ export interface Review {
 
 export interface ReviewListProps {
   movieId: string;
+  reviewsUpdated: boolean;
 }

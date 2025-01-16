@@ -3,13 +3,13 @@ import axios, {AxiosError} from "axios";
 import {Review, ReviewListProps} from "../type/ReviewProps.ts";
 
 
-export default function ReviewList({movieId}: ReviewListProps) {
+export default function ReviewList({movieId, reviewsUpdated}: ReviewListProps) {
   const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     fetchReviews();
-  }, [movieId]);
+  }, [movieId, reviewsUpdated]);
 
   const token = localStorage.getItem("accessToken");
 
@@ -22,14 +22,14 @@ export default function ReviewList({movieId}: ReviewListProps) {
       });
 
       if (response.status === 200) {
-        const reviewList: Review[] = response.data;
-        setReviews(reviewList);
+        setReviews(response.data);
       }
     } catch (error) {
       if (error instanceof AxiosError) {
-        if (error.status === 401)
-          alert("인증이 필요한 요청입니다. 로그인 후 이용해주세요")
-        else if (error.status === 500)
+        if (error.status === 401) {
+          alert("인증이 필요한 요청입니다. 로그인 후 이용해주세요");
+          console.error("리뷰 데이터를 불러오지 못했습니다:", error);
+        } else if (error.status === 500)
           console.error("서버에서 에러가 발생했습니다. : ", error);
       } else {
         console.error(error);
@@ -67,8 +67,8 @@ export default function ReviewList({movieId}: ReviewListProps) {
                     {review.author}
                   </h3>
                   <span className="text-gray-400 text-sm">
-                {new Date(review.createdAt).toLocaleDateString()}
-              </span>
+                    {new Date(review.createdAt).toLocaleDateString()}
+                  </span>
                 </div>
                 <p className="text-gray-300">{review.content}</p>
               </li>
