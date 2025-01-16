@@ -1,7 +1,6 @@
 import {useEffect, useState} from "react";
 import {Link} from "react-router-dom";
 import {MovieProps} from "../type/MovieProps.ts";
-// import {fetchWithToken} from "../api/fetchWithToken.ts";
 import axios, {AxiosError} from "axios";
 
 
