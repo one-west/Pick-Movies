@@ -1,13 +1,12 @@
 package org.example.pickmovies.controller;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Map;
 import org.example.pickmovies.JwtFactory;
 import org.example.pickmovies.domain.User;
-import org.example.pickmovies.dto.CreateAccessTokenRequest;
+import org.example.pickmovies.dto.TokenRequest;
 import org.example.pickmovies.jwt.JwtProperties;
 import org.example.pickmovies.jwt.RefreshToken;
 import org.example.pickmovies.repository.RefreshTokenRepository;
@@ -51,12 +50,13 @@ class AuthControllerTest {
     @Test
     void createAccessToken() throws Exception {
         // Given
-        final String url = "/api";
+        final String url = "/api/token/refresh";
         User testUser = userRepository.save(User.builder().email("user@email.com").password("test").build());
-        String refreshToken = JwtFactory.builder().claims(Map.of("id", testUser.getId())).build().createToken(jwtProperties);
+        String refreshToken = JwtFactory.builder().claims(Map.of("id", testUser.getId())).build()
+                .createToken(jwtProperties);
         refreshTokenRepository.save(new RefreshToken(testUser.getId(), refreshToken));
 
-        CreateAccessTokenRequest request = new CreateAccessTokenRequest();
+        TokenRequest request = new TokenRequest();
         request.setRefreshToken(refreshToken);
 
         final String requestBody = objectMapper.writeValueAsString(request);
@@ -72,6 +72,6 @@ class AuthControllerTest {
     }
 
     @Test
-    void login() {
+    void login() throws JsonProcessingException {
     }
 }
