@@ -38,8 +38,11 @@ public class SecurityConfig {
 
         http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(new AntPathRequestMatcher("/api/token/refresh")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/api/movie/**")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/api/user/login")).permitAll()
+                        .requestMatchers(new AntPathRequestMatcher("/api/user", "POST")).permitAll()
+                        .requestMatchers(new AntPathRequestMatcher("/api/reviews/movie/**")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/api/**")).authenticated()
                         .requestMatchers(new AntPathRequestMatcher("/admin/**")).hasRole("ADMIN")
                         .requestMatchers(new AntPathRequestMatcher("/user/**")).hasRole("USER")
