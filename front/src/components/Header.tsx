@@ -1,19 +1,19 @@
 import {Link} from "react-router-dom";
 
-export const Header = () => {
+export default function Header() {
   return (
       <header className="bg-gray-800 p-4">
         <div className="container mx-auto flex justify-between items-center">
           {/* 좌측 Nav */}
           <div className="flex items-center space-x-4">
             <h1 className="text-3xl font-bold text-yellow-400 mr-8">
-              <Link to="/">Pick Movies</Link>
+              <Link to="/">🎥 Pick Movies</Link>
             </h1>
             <nav className="space-x-7">
               <Link to="/" className="hover:text-yellow-400">Home</Link>
               <Link to="/popular" className="hover:text-yellow-400">Popular Movies</Link>
               <Link to="/genres" className="hover:text-yellow-400">Genres</Link>
-              <Link to="/about" className="hover:text-yellow-400">About</Link>
+              <Link to="/profile" className="hover:text-yellow-400">Profile</Link>
             </nav>
           </div>
           {/* 우측 Nav */}
