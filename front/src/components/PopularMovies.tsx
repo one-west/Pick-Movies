@@ -1,10 +1,9 @@
 import {useEffect, useState} from "react";
 import {Link} from "react-router-dom";
-import {MovieProps} from "../type/MovieProps.ts";
 import axios, {AxiosError} from "axios";
+import {MovieProps} from "../type/MovieProps.ts";
 
-
-export const PopularMovies = () => {
+export default function PopularMovies() {
   const [movies, setMovies] = useState<MovieProps[]>([]); // 영화 데이터를 저장할 상태
   const [loading, setLoading] = useState<boolean>(true);
 
