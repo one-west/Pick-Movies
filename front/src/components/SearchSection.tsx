@@ -1,4 +1,4 @@
-export const SearchSection = () => {
+export default function SearchSection() {
   return (
       <section className="py-8">
         <div className="container mx-auto">

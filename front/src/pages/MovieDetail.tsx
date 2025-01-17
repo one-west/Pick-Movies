@@ -6,12 +6,11 @@ import {useParams} from "react-router-dom";
 import ReviewForm from "../components/ReviewForm.tsx";
 import ReviewList from "../components/ReviewList.tsx";
 
-export default function MovieDetail() {
+export default function MovieDetail({isAuthenticated}: { isAuthenticated: boolean }) {
   const [movie, setMovie] = useState<MovieProps>();
   const [trailerKey, setTrailerKey] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [reviewsUpdated, setReviewsUpdated] = useState(false);
 
   const {movieId} = useParams<{ movieId: string }>();
@@ -21,7 +20,6 @@ export default function MovieDetail() {
   useEffect(() => {
     fetchMovieDetails();
     fetchTrailer(movieId!);
-    checkAuth();
   }, [movieId]);
 
   const token = localStorage.getItem("accessToken");
@@ -83,12 +81,6 @@ export default function MovieDetail() {
     } catch (error) {
       console.error("에러 fetchTrailer 중 문제발생", error);
     }
-  };
-
-  const checkAuth = () => {
-    // 예: JWT 토큰으로 로그인 여부를 확인
-    const token = localStorage.getItem("accessToken");
-    setIsAuthenticated(!!token);
   };
 
   const handleReviewSubmit = () => {
