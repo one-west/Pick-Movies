@@ -14,9 +14,9 @@ public class UserResponse {
     private String role;        // 사용자 역할 (USER, ADMIN 등)
 
     public UserResponse(User user) {
-        this.id = id;
-        this.username = username;
-        this.email = email;
-        this.role = role;
+        this.id = user.getId();
+        this.username = user.getUsername();
+        this.email = user.getEmail();
+        this.role = user.getRole();
     }
 }
