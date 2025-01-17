@@ -1,6 +1,5 @@
 package org.example.pickmovies.controller;
 
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.time.Duration;
@@ -14,10 +13,9 @@ import org.example.pickmovies.dto.UserResponse;
 import org.example.pickmovies.jwt.JwtTokenProvider;
 import org.example.pickmovies.service.TokenService;
 import org.example.pickmovies.service.UserService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -40,9 +38,9 @@ public class UserController {
     public static final Duration REFRESH_TOKEN_DURATION = Duration.ofDays(7);
 
     // 사용자 조회
-    @GetMapping("/user/{id}")
-    public ResponseEntity<UserResponse> getUser(@PathVariable("id") Long userId) {
-        User user = userService.findById(userId);
+    @GetMapping("/user")
+    public ResponseEntity<UserResponse> getUser() {
+        User user = userService.getCurrentUser();
         return ResponseEntity.ok(new UserResponse(user));
     }
 
@@ -63,21 +61,30 @@ public class UserController {
 
     // 사용자 정보 수정
     @PutMapping("/user/{id}")
-    public ResponseEntity<String> updateUser(@PathVariable("id") Long id, @RequestBody UserRequest request) {
+    public ResponseEntity<?> updateUser(@PathVariable("id") Long id, @RequestBody UserRequest request) {
         try {
             User user = userService.updateUser(id, request);
-            if (user == null) {
-                return ResponseEntity.badRequest().body("Update Failed: User not found");
-            }
-            return ResponseEntity.ok("Update Success");
+            return ResponseEntity.ok(new UserResponse(user));
+
+        } catch (IllegalArgumentException e) {
+            // 사용자 정보가 존재하지 않을 때
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("Update Failed: User with the provided ID not found" + e.getStackTrace());
+
+        } catch (BadCredentialsException e) {
+            // 현재 비밀번호가 틀린 경우
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body("Update Failed: The current password does not match");
 
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Update Failed: User not found");
+            // 그 외 예상치 못한 오류
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Update Failed: Unknown error");
         }
     }
 
     // 사용자 삭제
-    @DeleteMapping("/users/{id}")
+    @DeleteMapping("/user/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable("id") Long id) {
         userService.deleteUser(id);
         return ResponseEntity.noContent().build();
