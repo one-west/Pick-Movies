@@ -51,9 +51,17 @@ public class User implements UserDetails {
         this.role = (role == null || role.isEmpty()) ? "user" : role;
     }
 
-    public User update(String username, String password) {
+    public User update() {
+        return update(this.username, this.password);  // 두 값 모두 기본값을 사용
+    }
+
+    public User update(String username) {
+        return update(username, this.password);  // 기본값으로 현재 비밀번호를 사용
+    }
+
+    public User update(String username, String newPassword) {
         this.username = username;
-        this.password = password;
+        this.password = newPassword;
         return this;
     }
 
@@ -93,7 +101,7 @@ public class User implements UserDetails {
 
     @Override
     public String getUsername() {
-        return email;
+        return username;
     }
 
     @Override
