@@ -2,7 +2,7 @@ import {useState, useRef} from "react";
 import {useNavigate} from "react-router-dom";
 import axios from "axios";
 
-export default function Signup() {
+export default function SignupPage() {
   const [formData, setFormData] = useState({
     username: "",
     email: "",
@@ -152,7 +152,7 @@ export default function Signup() {
           <div className="mt-6 text-center">
             <p className="text-gray-400 text-sm">
               Already have an account?{" "}
-              <a href="/signin" className="text-yellow-400 hover:underline">
+              <a href="/front/src/pages/SigninPage" className="text-yellow-400 hover:underline">
                 Sign in here
               </a>
             </p>

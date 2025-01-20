@@ -2,7 +2,7 @@ import axios, {AxiosError} from "axios";
 import {Link, useNavigate} from "react-router-dom";
 import {useRef, useState} from "react";
 
-export default function Signin({setIsAuthenticated}: { setIsAuthenticated: (auth: boolean) => void }) {
+export default function SigninPage({setIsAuthenticated}: { setIsAuthenticated: (auth: boolean) => void }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
