@@ -1,8 +1,6 @@
 import axios from 'axios';
-import {useNavigate} from "react-router-dom";
 
 export const refreshAccessToken = async () => {
-  const navigate = useNavigate();
 
   try {
     const response = await axios.post("/api/token/refresh", {
@@ -13,26 +11,28 @@ export const refreshAccessToken = async () => {
       withCredentials: true, // 쿠키를 포함한 요청을 보낼 때 사용
     });
 
-    const newAccessToken = response.data;
+    const newAccessToken = await response.data;
     localStorage.setItem("accessToken", newAccessToken);
+    return newAccessToken;
 
   } catch (error) {
     console.error("리프레시 토큰을 사용한 액세스 토큰 갱신 실패:", error);
     alert("로그인이 필요합니다.");
     localStorage.clear();
-    navigate("/signin")
+    window.location.href = "/signin";
   }
 };
 
 export const isTokenExpired = (token: string) => {
   try {
-    const decoded = JSON.parse(atob(token.split('.')[1])); // JWT의 Payload 가져오기
-    const expirationTime = decoded.exp * 1000; // exp는 초 단위이므로 밀리초로 변환
-    const currentTime = Date.now();
+    const base64Url = token.split('.')[1];
+    if (!base64Url) throw new Error("유효하지 않은 토큰 형식");
 
-    return currentTime > expirationTime; // 현재 시간이 만료 시간보다 크면 만료된 것
+    const decodedPayload = JSON.parse(atob(base64Url));
+    const expirationTime = decodedPayload.exp * 1000; // 초 단위 → 밀리초 변환
+    return Date.now() > expirationTime; // 현재 시간이 만료 시간보다 크면 만료된 것
   } catch (error) {
     console.error("토큰 디코딩 오류", error);
-    return false; // 오류가 나면 기본적으로 만료되지 않은 것으로 처리
+    return true; // 오류 시 기본적으로 만료된 것으로 처리
   }
 };
