@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -90,4 +91,14 @@ public class MovieService {
                 });
     }
 
+    // 쿼리로 검색된 영화 데이터 가져오기
+    public Mono<String> searchMovies(String query) {
+        String url = String.format("%s/search/movie?api_key=%s&query=%s&language=ko", apiUrl, apiKey, query);
+
+        return webClientBuilder.baseUrl(url).build()
+                .get()
+                .uri(url)
+                .retrieve()
+                .bodyToMono(String.class);
+    }
 }
