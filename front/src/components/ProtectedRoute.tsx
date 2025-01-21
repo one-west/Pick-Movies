@@ -12,7 +12,7 @@ export default function ProtectedRoute({ isAuthenticated, children }: ProtectedR
   useEffect(() => {
     if (!isAuthenticated) {
       alert("로그인이 필요합니다.");
-      navigate("/signin");
+      navigate("/signin", { state: { from: location.pathname } });
     }
   }, [isAuthenticated]);
 
