@@ -17,9 +17,7 @@ export const refreshAccessToken = async () => {
 
   } catch (error) {
     console.error("리프레시 토큰을 사용한 액세스 토큰 갱신 실패:", error);
-    alert("로그인이 필요합니다.");
     localStorage.clear();
-    window.location.href = "/signin";
   }
 };
 
