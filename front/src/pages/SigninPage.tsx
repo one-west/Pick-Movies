@@ -1,5 +1,5 @@
 import axios, {AxiosError} from "axios";
-import {Link, useNavigate} from "react-router-dom";
+import {Link, useLocation, useNavigate} from "react-router-dom";
 import {useRef, useState} from "react";
 
 export default function SigninPage({setIsAuthenticated}: { setIsAuthenticated: (auth: boolean) => void }) {
@@ -7,6 +7,7 @@ export default function SigninPage({setIsAuthenticated}: { setIsAuthenticated: (
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
+  const location = useLocation();
 
   const emailRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
@@ -39,7 +40,9 @@ export default function SigninPage({setIsAuthenticated}: { setIsAuthenticated: (
 
         alert("로그인 성공!");
         setIsAuthenticated(true); // 로그인 상태 업데이트
-        navigate("/");
+
+        // 이전 경로로 리다이렉트하거나 기본 경로로 이동
+        navigate(location.state?.from || "/", {replace: true});
       }
     } catch (error) {
       if (error instanceof AxiosError) {
