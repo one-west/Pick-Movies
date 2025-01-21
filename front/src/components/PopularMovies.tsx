@@ -54,19 +54,30 @@ export default function PopularMovies() {
             {movies.map((movie) => (
                 <div
                     key={movie.id}
-                    className="bg-gray-800 rounded overflow-hidden shadow-lg transition-transform transform hover:scale-105 hover:shadow-xl"
+                    className="bg-gray-800 text-white rounded-lg shadow-lg overflow-hidden transform hover:scale-105 hover:shadow-2xl transition-all duration-300"
                 >
                   <Link to={`/movies/${movie.id}`} className="movie-item">
                     <img
                         src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
                         alt={movie.title}
-                        className="w-full h-96 object-cover rounded-t"
+                        className="w-full h-64 object-cover"
                     />
+                    <div className="p-4">
+                      <h2 className="text-xl font-bold mb-2 truncate">{movie.title}</h2>
+                      <p className="text-sm text-gray-400 mb-4">
+                        Release Date: {movie.release_date}
+                      </p>
+                      <p className="text-sm line-clamp-3 text-gray-300 mb-4">{movie.overview}</p>
+                      <div className="flex justify-between items-center">
+                  <span className="text-yellow-400 font-bold">
+                    ⭐ {movie.vote_average.toFixed(1)}
+                  </span>
+                        <button className="bg-yellow-500 text-black font-bold py-1 px-3 rounded-lg hover:bg-yellow-600">
+                          자세히 보기
+                        </button>
+                      </div>
+                    </div>
                   </Link>
-                  <div className="p-4">
-                    <h4 className="text-lg font-bold text-white truncate">{movie.title}</h4>
-                    <p className="text-sm text-gray-400">{movie.release_date}</p>
-                  </div>
                 </div>
             ))}
           </div>
