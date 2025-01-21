@@ -10,6 +10,7 @@ import {isTokenExpired, refreshAccessToken} from "./utils/authUtils.ts";
 import LoadingScreen from "./components/LoadingScreen.tsx";
 import Layout from "./components/Layout.tsx";
 import SearchPage from "./pages/SearchPage.tsx";
+import UpcomingPage from "./pages/UpcomingPage.tsx";
 
 export default function App() {
   const [loading, setLoading] = useState<boolean>(true);
@@ -52,6 +53,10 @@ export default function App() {
         {
           path: "/search",
           element: <SearchPage />
+        },
+        {
+          path: "/upcoming",
+          element: <UpcomingPage />
         },
       ]
     },
