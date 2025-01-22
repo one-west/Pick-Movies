@@ -20,14 +20,14 @@ public class MovieController {
 
     // 인기 영화 데이터 반환
     @GetMapping("/movie/popular")
-    public ResponseEntity<Mono<String>> getPopularMovies() {
-        return ResponseEntity.ok(movieService.getPopularMovies());
+    public ResponseEntity<Mono<String>> getPopularMovies(@RequestParam("page") String page) {
+        return ResponseEntity.ok(movieService.getPopularMovies(page));
     }
 
     // 개봉 예정 영화 데이터를 반환
     @GetMapping("/movie/upcoming")
-    public Mono<String> getUpcomingMovies() {
-        return movieService.getUpcomingMovies();
+    public Mono<String> getUpcomingMovies(@RequestParam("page") String page) {
+        return movieService.getUpcomingMovies(page);
     }
 
     // 특정 영화 상세 정보를 반환
