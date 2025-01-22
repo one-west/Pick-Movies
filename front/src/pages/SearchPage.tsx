@@ -1,7 +1,7 @@
 import {useEffect, useState} from "react";
 import axios from "axios";
 import {useLocation, useNavigate} from "react-router-dom";
-import SearchMovieList from "../components/SearchMoviesList.tsx";
+import MovieList from "../components/MoviesList.tsx";
 
 export default function SearchPage() {
   const [results, setResults] = useState([]); // 검색 결과 상태
@@ -85,7 +85,7 @@ export default function SearchPage() {
 
           {loading && <p className="mt-4 text-center text-yellow-400">Loading...</p>}
 
-          <SearchMovieList results={results} loading={loading}/>
+          <MovieList results={results} loading={loading}/>
         </div>
       </section>
   );
