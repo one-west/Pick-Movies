@@ -3,7 +3,7 @@ import {Link} from "react-router-dom";
 import axios, {AxiosError} from "axios";
 import {MovieProps} from "../type/MovieProps.ts";
 
-export default function PopularMovies() {
+export default function PopularCardMovies() {
   const [movies, setMovies] = useState<MovieProps[]>([]); // 영화 데이터를 저장할 상태
   const [loading, setLoading] = useState<boolean>(true);
 
@@ -15,7 +15,10 @@ export default function PopularMovies() {
 
   const getPopularMovies = async () => {
     try {
-      const response = await axios.get(`/api/movie/popular`, {headers: {Authorization: `Bearer ${token}`}})
+      const response = await axios.get(`/api/movie/popular`, {
+        headers: {Authorization: `Bearer ${token}`},
+        params: {page: 1}
+      })
 
       if (response.status === 200) {
         setMovies(response.data.results);
