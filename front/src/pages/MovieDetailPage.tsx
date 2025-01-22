@@ -1,7 +1,7 @@
 import {useEffect, useState} from "react";
 import axios, {AxiosError, AxiosResponse} from "axios";
 import {MovieProps, MovietrailerProps} from "../type/MovieProps.ts";
-import {YouTubeVideo} from "../components/YoutubeVideo.tsx";
+import {MovieTrailer} from "../components/MovieTrailer.tsx";
 import {useParams} from "react-router-dom";
 import ReviewForm from "../components/ReviewForm.tsx";
 import ReviewList from "../components/ReviewList.tsx";
@@ -180,7 +180,7 @@ export default function MovieDetailPage({isAuthenticated}: { isAuthenticated: bo
                             ✖
                           </button>
                           {/* 트레일러 영상 */}
-                          <YouTubeVideo trailerKey={trailerKey}/>
+                          <MovieTrailer trailerKey={trailerKey}/>
                         </div>
                       </div>
                   )}
