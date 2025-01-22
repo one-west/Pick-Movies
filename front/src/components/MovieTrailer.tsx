@@ -2,7 +2,7 @@ interface VideoProps {
   trailerKey: string;
 }
 
-export const YouTubeVideo = ({trailerKey}: VideoProps) => {
+export const MovieTrailer = ({trailerKey}: VideoProps) => {
   return (
       <iframe
           width="100%"
