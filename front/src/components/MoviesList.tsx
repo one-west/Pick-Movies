@@ -7,12 +7,11 @@ interface MovieListProps {
 }
 
 
-export default function SearchMovieList({results, loading}: MovieListProps) {
+export default function MovieList({results, loading}: MovieListProps) {
   if (results.length === 0 && !loading) {
     return <p className="mt-8 text-center text-gray-400">일치하는 영화가 없습니다.</p>;
   }
   return (
-
       <ul className="mt-8 space-y-6">
         {results.map((movie) => (
             <li key={movie.id} className="bg-gray-800 p-4 rounded-lg shadow-lg">
@@ -40,5 +39,4 @@ export default function SearchMovieList({results, loading}: MovieListProps) {
         ))}
       </ul>
   )
-
 }
