@@ -25,8 +25,8 @@ public class MovieService {
     private String apiKey;
 
     // 인기 영화목록 가져오기
-    public Mono<String> getPopularMovies() {
-        String url = apiUrl + "/movie/popular?api_key=" + apiKey + "&language=ko&page=1";
+    public Mono<String> getPopularMovies(String page) {
+        String url = apiUrl + "/movie/popular?api_key=" + apiKey + "&page=" + page + "&language=ko";
 
         return webClientBuilder.baseUrl(apiUrl).build()
                 .get()
@@ -36,8 +36,8 @@ public class MovieService {
     }
 
     // 개봉 예정 영화목록 가져오기
-    public Mono<String> getUpcomingMovies() {
-        String url = apiUrl + "/movie/upcoming?api_key=" + apiKey + "&language=ko";
+    public Mono<String> getUpcomingMovies(String page) {
+        String url = apiUrl + "/movie/upcoming?api_key=" + apiKey + "&page=" + page + "&language=ko";
 
         return webClientBuilder.baseUrl(apiUrl).build()
                 .get()
