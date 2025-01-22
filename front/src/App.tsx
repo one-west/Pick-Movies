@@ -11,6 +11,7 @@ import LoadingScreen from "./components/LoadingScreen.tsx";
 import Layout from "./components/Layout.tsx";
 import SearchPage from "./pages/SearchPage.tsx";
 import UpcomingPage from "./pages/UpcomingPage.tsx";
+import PopularPage from "./pages/PopularPage.tsx";
 
 export default function App() {
   const [loading, setLoading] = useState<boolean>(true);
@@ -53,6 +54,10 @@ export default function App() {
         {
           path: "/search",
           element: <SearchPage />
+        },
+        {
+          path: "/popular",
+          element: <PopularPage />
         },
         {
           path: "/upcoming",
