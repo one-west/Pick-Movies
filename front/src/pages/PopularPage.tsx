@@ -2,6 +2,7 @@ import {useEffect, useRef, useState} from "react";
 import axios, {AxiosError} from "axios";
 import {MovieProps} from "../type/MovieProps.ts";
 import MovieList from "../components/MoviesList.tsx";
+import MovieFilter from "../components/MovieFilter.tsx";
 
 export default function PopularPage() {
   const [movies, setMovies] = useState<MovieProps[]>([]);
@@ -9,11 +10,12 @@ export default function PopularPage() {
   const [isFetching, setIsFetching] = useState(false);
   const [error, setError] = useState("");
   const [page, setPage] = useState(1);
+  const [filters, setFilters] = useState<{ genre?: string, year?: string }>({});
   const loaderRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    fetchMovies(page);
-  }, [page]);
+    fetchMovies(page, filters);
+  }, [page, filters]);  // page나 filters가 변경될 때마다 실행
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -30,12 +32,20 @@ export default function PopularPage() {
     return () => {
       if (loaderRef.current) observer.unobserve(loaderRef.current);
     };
-  }, [isFetching]);
+  }, [isFetching]);  // isFetching이 변경될 때마다 실행
 
-  const fetchMovies = async (page: number) => {
+  const handleFilterChange = (newFilters: { genre?: string; year?: string }) => {
+    setPage(1); // 필터가 변경되면 페이지를 초기화
+    setMovies([]); // 기존 영화 리스트를 초기화
+    setFilters(newFilters);
+  };
+
+  const fetchMovies = async (page: number, filters: { genre?: string; year?: string }) => {
     setIsFetching(true);
     try {
-      const response = await axios.get("/api/movie/popular", {params: {page},});
+      const response = await axios.get("/api/movie/popular", {
+        params: { page, ...filters },
+      });
 
       if (response.status === 200) {
         setMovies((prevMovies) => [...prevMovies, ...response.data.results]);
@@ -60,8 +70,7 @@ export default function PopularPage() {
     return (
         <section className="min-h-screen flex items-center justify-center bg-gray-900 text-white">
           <div className="text-center">
-            <div
-                className="spinner-border animate-spin inline-block w-8 h-8 border-4 rounded-full text-yellow-400"></div>
+            <div className="spinner-border animate-spin inline-block w-8 h-8 border-4 rounded-full text-yellow-400"></div>
             <p className="text-lg mt-4">Loading upcoming movies...</p>
           </div>
         </section>
@@ -74,7 +83,7 @@ export default function PopularPage() {
           <div className="text-center">
             <p className="text-lg font-semibold text-red-500 mb-4">{error}</p>
             <button
-                onClick={() => fetchMovies(page)}
+                onClick={() => fetchMovies(page, filters)}
                 className="bg-yellow-500 text-black font-bold py-2 px-4 rounded-lg hover:bg-yellow-600"
             >
               다시 시도하기
@@ -89,16 +98,18 @@ export default function PopularPage() {
         <h1 className="text-4xl font-bold text-yellow-400 text-center mb-6">
           Popular Movies
         </h1>
-        <div className="container mx-auto">
-          <MovieList results={movies} loading={loading}/>
-        </div>
-        {/* 로딩 표시를 위한 영역 */}
-        <div ref={loaderRef} className="text-center mt-6">
-          {isFetching && (
-              <div
-                  className="spinner-border animate-spin inline-block w-6 h-6 border-4 rounded-full text-yellow-400">
-              </div>
-          )}
+        <div className="flex flex-col md:flex-row gap-8">
+          <aside className="w-full md:w-1/5 mt-8">
+            <MovieFilter onFilterChange={handleFilterChange} />
+          </aside>
+          <main className="w-full md:w-3/4">
+            <MovieList results={movies} loading={loading} />
+            <div ref={loaderRef} className="text-center mt-6">
+              {isFetching && (
+                  <div className="spinner-border animate-spin inline-block w-6 h-6 border-4 rounded-full text-yellow-400"></div>
+              )}
+            </div>
+          </main>
         </div>
       </div>
   );
