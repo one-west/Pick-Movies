@@ -25,8 +25,18 @@ public class MovieService {
     private String apiKey;
 
     // 인기 영화목록 가져오기
-    public Mono<String> getPopularMovies(String page) {
-        String url = apiUrl + "/movie/popular?api_key=" + apiKey + "&page=" + page + "&language=ko";
+    public Mono<String> getPopularMovies(int page, String genre, Integer year) {
+//        String url = String.format("%s/movie/popular?api_key=%s&page=%d&language=ko", apiUrl, apiKey, page);
+        String url = String.format("%s/discover/movie?api_key=%s&page=%d&language=ko", apiUrl, apiKey, page);
+        if (genre != null && !genre.isEmpty()) {
+            url += "&with_genres=" + genre;
+        }
+
+        if (year != null) {
+            url += "&year=" + year;
+        }
+
+        System.out.println("Generated URL: " + url);
 
         return webClientBuilder.baseUrl(apiUrl).build()
                 .get()
@@ -36,8 +46,16 @@ public class MovieService {
     }
 
     // 개봉 예정 영화목록 가져오기
-    public Mono<String> getUpcomingMovies(String page) {
-        String url = apiUrl + "/movie/upcoming?api_key=" + apiKey + "&page=" + page + "&language=ko";
+    public Mono<String> getUpcomingMovies(int page, String genre, Integer year) {
+        String url = String.format("%s/movie/upcoming?api_key=%s&page=%d&language=ko", apiUrl, apiKey, page);
+
+        if (genre != null) {
+            url += "&with_genres=" + genre;
+        }
+
+        if (year != null) {
+            url += "&year=" + year;
+        }
 
         return webClientBuilder.baseUrl(apiUrl).build()
                 .get()
@@ -48,7 +66,7 @@ public class MovieService {
 
     // 영화 상세 정보 가져오기
     public Mono<String> getMovieDetails(Long id) {
-        String url = apiUrl + "/movie/" + id + "?api_key=" + apiKey + "&language=ko";
+        String url = String.format("%s/movie/%d?api_key=%s&language=ko", apiUrl, id, apiKey);
 
         return webClientBuilder.baseUrl(apiUrl).build()
                 .get()

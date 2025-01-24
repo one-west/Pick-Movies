@@ -20,30 +20,38 @@ public class MovieController {
 
     // 인기 영화 데이터 반환
     @GetMapping("/movie/popular")
-    public ResponseEntity<Mono<String>> getPopularMovies(@RequestParam("page") String page) {
-        return ResponseEntity.ok(movieService.getPopularMovies(page));
+    public ResponseEntity<Mono<String>> getPopularMovies(@RequestParam(value = "page", defaultValue = "1") int page,
+            @RequestParam(value = "genre", required = false) String genre,
+            @RequestParam(value = "year", required = false) Integer year) {
+
+        Mono<String> popularMovies = movieService.getPopularMovies(page, genre, year);
+        return ResponseEntity.ok(popularMovies);
     }
 
     // 개봉 예정 영화 데이터를 반환
     @GetMapping("/movie/upcoming")
-    public Mono<String> getUpcomingMovies(@RequestParam("page") String page) {
-        return movieService.getUpcomingMovies(page);
+    public ResponseEntity<Mono<String>> getUpcomingMovies(@RequestParam(value = "page", defaultValue = "1") int page,
+            @RequestParam(value = "genre", required = false) String genre,
+            @RequestParam(value = "year", required = false) Integer year) {
+
+        Mono<String> upcomingMovies = movieService.getUpcomingMovies(page, genre, year);
+        return ResponseEntity.ok(upcomingMovies);
     }
 
     // 특정 영화 상세 정보를 반환
     @GetMapping("/movie/{id}")
-    public Mono<String> getMovieDetails(@PathVariable("id") Long id) {
-        return movieService.getMovieDetails(id);
+    public ResponseEntity<Mono<String>> getMovieDetails(@PathVariable("id") Long id) {
+        return ResponseEntity.ok(movieService.getMovieDetails(id));
     }
 
     // 영화 트레일러 정보를 반환
     @GetMapping("/movie/{id}/videos")
-    public Mono<String> getMovieVideos(@PathVariable("id") Long id) {
-        return movieService.getMovieVideos(id);
+    public ResponseEntity<Mono<String>> getMovieVideos(@PathVariable("id") Long id) {
+        return ResponseEntity.ok(movieService.getMovieVideos(id));
     }
 
     @GetMapping("/movie/search")
-    public Mono<String> searchMovies(@RequestParam("query") String query) {
-        return movieService.searchMovies(query);
+    public ResponseEntity<Mono<String>> searchMovies(@RequestParam("query") String query) {
+        return ResponseEntity.ok(movieService.searchMovies(query));
     }
 }
