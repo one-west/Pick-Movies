@@ -22,9 +22,10 @@ public class MovieController {
     @GetMapping("/movie/popular")
     public ResponseEntity<Mono<String>> getPopularMovies(@RequestParam(value = "page", defaultValue = "1") int page,
             @RequestParam(value = "genre", required = false) String genre,
-            @RequestParam(value = "year", required = false) Integer year) {
+            @RequestParam(value = "startDate", required = false) String startDate,
+            @RequestParam(value = "endDate", required = false) String endDate) {
 
-        Mono<String> popularMovies = movieService.getPopularMovies(page, genre, year);
+        Mono<String> popularMovies = movieService.getPopularMovies(page, genre, startDate, endDate);
         return ResponseEntity.ok(popularMovies);
     }
 
@@ -32,9 +33,10 @@ public class MovieController {
     @GetMapping("/movie/upcoming")
     public ResponseEntity<Mono<String>> getUpcomingMovies(@RequestParam(value = "page", defaultValue = "1") int page,
             @RequestParam(value = "genre", required = false) String genre,
-            @RequestParam(value = "year", required = false) Integer year) {
+            @RequestParam(value = "startDate", required = false) String startDate,
+            @RequestParam(value = "endDate", required = false) String endDate) {
 
-        Mono<String> upcomingMovies = movieService.getUpcomingMovies(page, genre, year);
+        Mono<String> upcomingMovies = movieService.getUpcomingMovies(page, genre, startDate, endDate);
         return ResponseEntity.ok(upcomingMovies);
     }
 

@@ -25,18 +25,19 @@ public class MovieService {
     private String apiKey;
 
     // 인기 영화목록 가져오기
-    public Mono<String> getPopularMovies(int page, String genre, Integer year) {
-//        String url = String.format("%s/movie/popular?api_key=%s&page=%d&language=ko", apiUrl, apiKey, page);
+    public Mono<String> getPopularMovies(int page, String genre, String startDate, String endDate) {
         String url = String.format("%s/discover/movie?api_key=%s&page=%d&language=ko", apiUrl, apiKey, page);
+
         if (genre != null && !genre.isEmpty()) {
             url += "&with_genres=" + genre;
         }
 
-        if (year != null) {
-            url += "&year=" + year;
+        if (startDate != null) {
+            url += "&primary_release_date.gte=" + startDate;
+            if (endDate != null) {
+                url += "&primary_release_date.lte=" + endDate;
+            }
         }
-
-        System.out.println("Generated URL: " + url);
 
         return webClientBuilder.baseUrl(apiUrl).build()
                 .get()
@@ -46,15 +47,19 @@ public class MovieService {
     }
 
     // 개봉 예정 영화목록 가져오기
-    public Mono<String> getUpcomingMovies(int page, String genre, Integer year) {
-        String url = String.format("%s/movie/upcoming?api_key=%s&page=%d&language=ko", apiUrl, apiKey, page);
+    public Mono<String> getUpcomingMovies(int page, String genre, String startDate, String endDate) {
+
+        String baseurl = genre != null || startDate != null ? "/discover/movie" : "/movie/upcoming";
+        String url = String.format("%s%s?api_key=%s&page=%d&language=ko", apiUrl, baseurl, apiKey, page);
 
         if (genre != null) {
             url += "&with_genres=" + genre;
         }
-
-        if (year != null) {
-            url += "&year=" + year;
+        if (startDate != null) {
+            url += "&primary_release_date.gte=" + startDate;
+        }
+        if (endDate != null) {
+            url += "&primary_release_date.lte=" + endDate;
         }
 
         return webClientBuilder.baseUrl(apiUrl).build()
