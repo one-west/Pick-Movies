@@ -3,6 +3,7 @@ import axios, {AxiosError} from "axios";
 import {MovieProps} from "../type/MovieProps.ts";
 import MovieList from "../components/MoviesList.tsx";
 import MovieFilter from "../components/MovieFilter.tsx";
+import {FilterProps} from "../type/FilterProps.ts";
 
 export default function PopularPage() {
   const [movies, setMovies] = useState<MovieProps[]>([]);
@@ -10,7 +11,7 @@ export default function PopularPage() {
   const [isFetching, setIsFetching] = useState(false);
   const [error, setError] = useState("");
   const [page, setPage] = useState(1);
-  const [filters, setFilters] = useState<{ genre?: string, year?: string }>({});
+  const [filters, setFilters] = useState<FilterProps>({});
   const loaderRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -34,13 +35,13 @@ export default function PopularPage() {
     };
   }, [isFetching]);  // isFetching이 변경될 때마다 실행
 
-  const handleFilterChange = (newFilters: { genre?: string; year?: string }) => {
+  const handleFilterChange = (newFilters: FilterProps) => {
     setPage(1); // 필터가 변경되면 페이지를 초기화
     setMovies([]); // 기존 영화 리스트를 초기화
     setFilters(newFilters);
   };
 
-  const fetchMovies = async (page: number, filters: { genre?: string; year?: string }) => {
+  const fetchMovies = async (page: number, filters: FilterProps) => {
     setIsFetching(true);
     try {
       const response = await axios.get("/api/movie/popular", {
@@ -104,6 +105,7 @@ export default function PopularPage() {
           </aside>
           <main className="w-full md:w-3/4">
             <MovieList results={movies} loading={loading} />
+            {/* 로딩 표시를 위한 영역 */}
             <div ref={loaderRef} className="text-center mt-6">
               {isFetching && (
                   <div className="spinner-border animate-spin inline-block w-6 h-6 border-4 rounded-full text-yellow-400"></div>
