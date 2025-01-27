@@ -7,7 +7,7 @@ import org.example.pickmovies.domain.User;
 public class LoginResponse {
 
     private String email;
-    private String password;
+    private String username;
     private String accessToken;
 
     public LoginResponse() {
@@ -15,7 +15,7 @@ public class LoginResponse {
 
     public LoginResponse(User user, String accessToken) {
         this.email = user.getEmail();
-        this.password = user.getPassword();
+        this.username = user.getUsername();
         this.accessToken = accessToken;
     }
 }
