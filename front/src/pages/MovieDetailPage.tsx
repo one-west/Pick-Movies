@@ -5,8 +5,11 @@ import {MovieTrailer} from "../components/MovieTrailer.tsx";
 import {useParams} from "react-router-dom";
 import ReviewForm from "../components/ReviewForm.tsx";
 import ReviewList from "../components/ReviewList.tsx";
+import {useAuth} from "../context/AuthContext.tsx";
 
-export default function MovieDetailPage({isAuthenticated}: { isAuthenticated: boolean }) {
+export default function MovieDetailPage() {
+  const {isAuthenticated} = useAuth();
+
   const [movie, setMovie] = useState<MovieProps>();
   const [trailerKey, setTrailerKey] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);

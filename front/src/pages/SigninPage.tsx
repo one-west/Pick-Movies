@@ -1,8 +1,9 @@
 import axios, {AxiosError} from "axios";
 import {Link, useLocation, useNavigate} from "react-router-dom";
 import {useRef, useState} from "react";
+import {useAuth} from "../context/AuthContext";
 
-export default function SigninPage({setIsAuthenticated}: { setIsAuthenticated: (auth: boolean) => void }) {
+export default function SigninPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -11,6 +12,9 @@ export default function SigninPage({setIsAuthenticated}: { setIsAuthenticated: (
 
   const emailRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
+
+  // AuthContext에서 로그인 메서드 가져오기
+  const {login} = useAuth();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -28,18 +32,25 @@ export default function SigninPage({setIsAuthenticated}: { setIsAuthenticated: (
     }
 
     try {
-      const response = await axios.post("/api/user/login", {email, password}, {
-        headers: {
-          "Content-Type": "application/json",
-        }
-      });
+      const response = await axios.post(
+          "/api/user/login",
+          {email, password},
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+      );
 
       if (response.status === 200) {
         // JWT 액세스 토큰 로컬 스토리지에 저장
-        localStorage.setItem("accessToken", response.data.accessToken);
+        const {accessToken, username} = response.data;
+        localStorage.setItem("accessToken", accessToken);
+
+        // AuthContext의 login 메서드 호출
+        login(accessToken, username);
 
         alert("로그인 성공!");
-        setIsAuthenticated(true); // 로그인 상태 업데이트
 
         // 이전 경로로 리다이렉트하거나 기본 경로로 이동
         navigate(location.state?.from || "/", {replace: true});
@@ -57,7 +68,8 @@ export default function SigninPage({setIsAuthenticated}: { setIsAuthenticated: (
         alert(error);
       }
     }
-  }
+  };
+
   return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-gray-900 to-black">
         <div className="text-center mb-10">
@@ -83,11 +95,14 @@ export default function SigninPage({setIsAuthenticated}: { setIsAuthenticated: (
                   className="w-full px-4 py-2 rounded-lg bg-gray-700 border border-gray-600 text-white focus:outline-none focus:ring-2 focus:ring-yellow-400"
                   placeholder="Enter your email"
                   ref={emailRef}
-                  onChange={event => setEmail(event.target.value)}
+                  onChange={(event) => setEmail(event.target.value)}
               />
             </div>
             <div className="mb-6">
-              <label className="block text-sm font-medium mb-2" htmlFor="password">
+              <label
+                  className="block text-sm font-medium mb-2"
+                  htmlFor="password"
+              >
                 Password
               </label>
               <input
@@ -97,7 +112,7 @@ export default function SigninPage({setIsAuthenticated}: { setIsAuthenticated: (
                   className="w-full px-4 py-2 rounded-lg bg-gray-700 border border-gray-600 text-white focus:outline-none focus:ring-2 focus:ring-yellow-400"
                   placeholder="Enter your password"
                   ref={passwordRef}
-                  onChange={event => setPassword(event.target.value)}
+                  onChange={(event) => setPassword(event.target.value)}
               />
             </div>
             <button
